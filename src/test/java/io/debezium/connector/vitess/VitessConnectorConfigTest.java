@@ -282,4 +282,27 @@ public class VitessConnectorConfigTest {
         assertThat(connectorConfig.getConnectorGeneration()).isEqualTo(0);
     }
 
+    @Test
+    public void shouldFailInheritEpochValidationWithoutOrderedTransactionMetadataFactory() {
+        Configuration configuration = TestHelper.defaultConfig()
+                .with(VitessConnectorConfig.INHERIT_EPOCH, true)
+                .build();
+        List<String> problems = new ArrayList<>();
+        boolean valid = VitessConnectorConfig.INHERIT_EPOCH.validate(configuration, (field, value, message) -> problems.add(message));
+        assertThat(valid).isFalse();
+        assertThat(problems).containsExactly("Inherit epoch cannot be enabled without VitessOrderedTransactionMetadataFactory");
+    }
+
+    @Test
+    public void shouldPassInheritEpochValidationWithOrderedTransactionMetadataFactory() {
+        Configuration configuration = TestHelper.defaultConfig()
+                .with(VitessConnectorConfig.INHERIT_EPOCH, true)
+                .with(CommonConnectorConfig.TRANSACTION_METADATA_FACTORY, VitessOrderedTransactionMetadataFactory.class.getName())
+                .build();
+        List<String> problems = new ArrayList<>();
+        boolean valid = VitessConnectorConfig.INHERIT_EPOCH.validate(configuration, (field, value, message) -> problems.add(message));
+        assertThat(valid).isTrue();
+        assertThat(problems).isEmpty();
+    }
+
 }

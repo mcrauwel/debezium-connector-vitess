@@ -305,4 +305,27 @@ public class VitessConnectorConfigTest {
         assertThat(problems).isEmpty();
     }
 
+    @Test
+    public void shouldGetGrpcHeadersWithColonsInValue() {
+        Configuration configuration = TestHelper.defaultConfig()
+                .with(VitessConnectorConfig.GRPC_HEADERS, "authorization:Bearer a:b:c,x-custom-header:value")
+                .build();
+        VitessConnectorConfig connectorConfig = new VitessConnectorConfig(configuration);
+        assertThat(connectorConfig.getGrpcHeaders())
+                .containsEntry("authorization", "Bearer a:b:c")
+                .containsEntry("x-custom-header", "value")
+                .hasSize(2);
+    }
+
+    @Test
+    public void shouldSkipGrpcHeadersWithoutColon() {
+        Configuration configuration = TestHelper.defaultConfig()
+                .with(VitessConnectorConfig.GRPC_HEADERS, "not-a-header,x-custom-header:value")
+                .build();
+        VitessConnectorConfig connectorConfig = new VitessConnectorConfig(configuration);
+        assertThat(connectorConfig.getGrpcHeaders())
+                .containsEntry("x-custom-header", "value")
+                .hasSize(1);
+    }
+
 }

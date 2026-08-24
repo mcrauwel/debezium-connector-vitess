@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import io.debezium.config.CommonConnectorConfig;
 import io.debezium.config.Configuration;
 import io.debezium.connector.vitess.pipeline.txmetadata.VitessOrderedTransactionMetadataFactory;
+import io.debezium.doc.FixFor;
 import io.debezium.heartbeat.Heartbeat;
 import io.debezium.heartbeat.Heartbeat.ScheduledHeartbeat;
 
@@ -283,6 +284,7 @@ public class VitessConnectorConfigTest {
     }
 
     @Test
+    @FixFor("debezium/dbz#2479")
     public void shouldFailInheritEpochValidationWithoutOrderedTransactionMetadataFactory() {
         Configuration configuration = TestHelper.defaultConfig()
                 .with(VitessConnectorConfig.INHERIT_EPOCH, true)
@@ -294,6 +296,7 @@ public class VitessConnectorConfigTest {
     }
 
     @Test
+    @FixFor("debezium/dbz#2479")
     public void shouldPassInheritEpochValidationWithOrderedTransactionMetadataFactory() {
         Configuration configuration = TestHelper.defaultConfig()
                 .with(VitessConnectorConfig.INHERIT_EPOCH, true)
@@ -306,6 +309,7 @@ public class VitessConnectorConfigTest {
     }
 
     @Test
+    @FixFor("debezium/dbz#2480")
     public void shouldGetGrpcHeadersWithColonsInValue() {
         Configuration configuration = TestHelper.defaultConfig()
                 .with(VitessConnectorConfig.GRPC_HEADERS, "authorization:Bearer a:b:c,x-custom-header:value")
@@ -318,6 +322,7 @@ public class VitessConnectorConfigTest {
     }
 
     @Test
+    @FixFor("debezium/dbz#2480")
     public void shouldSkipGrpcHeadersWithoutColon() {
         Configuration configuration = TestHelper.defaultConfig()
                 .with(VitessConnectorConfig.GRPC_HEADERS, "not-a-header,x-custom-header:value")
